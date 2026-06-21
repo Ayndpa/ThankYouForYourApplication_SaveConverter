@@ -1,0 +1,10 @@
+# Decompiled assemblies
+Decompiled/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# uv
+.uv/
