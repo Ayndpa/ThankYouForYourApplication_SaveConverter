@@ -118,6 +118,30 @@ def fix_ratings(src: Path) -> None:
     print(f"✓ 共 {len(histories)} 天，修改了 {changed} 天的评级为 0")
 
 
+def max_money(src: Path) -> None:
+    """将余额设为最大值 (2147483647)"""
+    data = load_save(src)
+    old = data.get("money", 0)
+    data["money"] = 2147483647
+    save_save(src, data)
+    print(f"✓ 余额: {old} → 2147483647")
+
+
+def clear_bi(src: Path) -> None:
+    """清空当前崩溃值 (BI) 及所有历史记录"""
+    data = load_save(src)
+    old_bi = data.get("BI", 0)
+    data["BI"] = 0
+    bi_hist = data.get("BIHistories", {}).get("$values", [])
+    cleared = 0
+    for entry in bi_hist:
+        if entry.get("BI", 0) != 0:
+            entry["BI"] = 0
+            cleared += 1
+    save_save(src, data)
+    print(f"✓ 当前 BI: {old_bi} → 0，历史记录已清零 {cleared} 条")
+
+
 # ═══════════════════════════════════════════
 #  CLI 子命令 (原 save_converter.py 功能)
 # ═══════════════════════════════════════════
@@ -240,6 +264,8 @@ def interactive() -> None:
     ACTIONS = [
         ("导出为 JSON", export_to_json),
         ("一键修改全满分评级", fix_ratings),
+        ("一键最大余额", max_money),
+        ("一键清空崩溃值 (BI)", clear_bi),
     ]
 
     print("请选择操作:")
